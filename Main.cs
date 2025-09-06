@@ -1,17 +1,79 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Flow.Launcher.Plugin;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace Flow.Launcher.Plugin.Caffeine
 {
+    public static class TrayIconManager
+    {
+        private static NotifyIcon _notifyIcon;
+        private static ContextMenuStrip _contextMenu;
+
+        // Only way i know how to get the script folder.. If anyone knows how to get this within the plugin api please let me know
+        private static Assembly currentAssembly = Assembly.GetExecutingAssembly();
+        static string dllPath = currentAssembly.Location;
+        static string pluginPath = Path.GetDirectoryName(dllPath);
+        public static void Initialize()
+        {
+            _notifyIcon = new NotifyIcon();
+            _contextMenu = new ContextMenuStrip();
+
+            // Set the icon
+            _notifyIcon.Icon = new Icon(Path.Combine(pluginPath, "Images/icon.ico"));
+
+            // Set the tooltip text
+            _notifyIcon.Text = "Caffeine is running.";
+
+            // Make the icon hidden
+            _notifyIcon.Visible = false;
+        }
+
+        public static void Dispose()
+        {
+            if (_notifyIcon != null)
+            {
+                _notifyIcon.Visible = false;
+                _notifyIcon.Dispose();
+                _notifyIcon = null;
+            }
+        }
+
+        public static void ShowTray()
+        {
+            if (_notifyIcon != null)
+            {
+                _notifyIcon.Visible = true;
+            }
+        }
+
+        public static void HideTray()
+        {
+            if (_notifyIcon != null)
+            {
+                _notifyIcon.Visible = false;
+            }
+        }
+
+        // Example method to show a form (you'd replace this with your actual form logic)
+        private static void ShowApplicationForm()
+        {
+            // Example: If you have a main form, you'd show it here.
+            // Form1 mainForm = new Form1();
+            // mainForm.Show();
+            MessageBox.Show("Application form would be shown here.", "Tray Icon Demo");
+        }
+    }
     public class Caffeine : IPlugin
     {
         internal PluginInitContext Context;
         private bool _enabled = false;
-
         internal static class NativeMethods
         {
             // Import SetThreadExecutionState Win32 API and necessary flags
@@ -34,11 +96,13 @@ namespace Flow.Launcher.Plugin.Caffeine
                     if (!_enabled)
                     {
                         PowerUtilities.PreventPowerSave();
+                        TrayIconManager.ShowTray();
                         _enabled = true;
                     }
                     else
                     {
                         PowerUtilities.Shutdown();
+                        TrayIconManager.HideTray();
                         _enabled = false;
                     }
                     return true;
@@ -67,6 +131,7 @@ namespace Flow.Launcher.Plugin.Caffeine
         public void Init(PluginInitContext context)
         {
             Context = context;
+            TrayIconManager.Initialize();
         }
 
     }

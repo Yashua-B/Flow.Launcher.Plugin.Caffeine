@@ -7,6 +7,11 @@ public partial class PluginSettings : UserControl
     private readonly PluginInitContext _context;
     private readonly Settings _settings;
 
+    /// <summary>
+    /// Initialize the plugin settings UI
+    /// </summary>
+    /// <param name="context">Plugin context</param>
+    /// <param name="settings">Plugin settings</param>
     public PluginSettings(PluginInitContext context, Settings settings)
     {
         InitializeComponent();

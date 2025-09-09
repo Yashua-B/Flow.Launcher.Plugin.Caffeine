@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Controls;
+using Flow.Launcher.Plugin.Caffeine.Settings;
 
 namespace Flow.Launcher.Plugin.Caffeine
 {
@@ -70,10 +72,11 @@ namespace Flow.Launcher.Plugin.Caffeine
             MessageBox.Show("Application form would be shown here.", "Tray Icon Demo");
         }
     }
-    public class Caffeine : IPlugin
+    public class Caffeine : IPlugin, ISettingProvider
     {
         internal PluginInitContext Context;
         private bool _enabled = false;
+        private Settings.Settings _settings;
         internal static class NativeMethods
         {
             // Import SetThreadExecutionState Win32 API and necessary flags
@@ -95,15 +98,11 @@ namespace Flow.Launcher.Plugin.Caffeine
                 {
                     if (!_enabled)
                     {
-                        PowerUtilities.PreventPowerSave();
-                        TrayIconManager.ShowTray();
-                        _enabled = true;
+                        StartCaffeine();
                     }
                     else
                     {
-                        PowerUtilities.Shutdown();
-                        TrayIconManager.HideTray();
-                        _enabled = false;
+                        StopCaffeine();
                     }
                     return true;
                 },
@@ -128,10 +127,43 @@ namespace Flow.Launcher.Plugin.Caffeine
         {
             NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_SYSTEM_REQUIRED | NativeMethods.ES_AWAYMODE_REQUIRED);
         }
+        
         public void Init(PluginInitContext context)
         {
             Context = context;
             TrayIconManager.Initialize();
+            _settings = context.API.LoadSettingJsonStorage<Settings.Settings>();
+            
+            // Start caffeine automatically if the setting is enabled
+            if (_settings.StartWithFlowLauncher)
+            {
+                StartCaffeine();
+            }
+        }
+
+        private void StartCaffeine()
+        {
+            if (!_enabled)
+            {
+                PowerUtilities.PreventPowerSave();
+                TrayIconManager.ShowTray();
+                _enabled = true;
+            }
+        }
+
+        private void StopCaffeine()
+        {
+            if (_enabled)
+            {
+                PowerUtilities.Shutdown();
+                TrayIconManager.HideTray();
+                _enabled = false;
+            }
+        }
+
+        public System.Windows.Controls.Control CreateSettingPanel()
+        {
+            return new PluginSettings(Context, _settings);
         }
 
     }

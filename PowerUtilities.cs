@@ -46,7 +46,7 @@ namespace Flow.Launcher.Plugin.Caffeine
         /// </summary>
         public static void PreventPowerSave()
         {
-            (new TaskFactory()).StartNew(() =>
+            new TaskFactory().StartNew(() =>
                 {
                     SetThreadExecutionState(
                         EXECUTION_STATE.ES_CONTINUOUS

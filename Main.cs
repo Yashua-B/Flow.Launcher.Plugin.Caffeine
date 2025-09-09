@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using Flow.Launcher.Plugin;
 using Flow.Launcher.Plugin.Caffeine.Settings;
 
 namespace Flow.Launcher.Plugin.Caffeine
@@ -11,9 +8,25 @@ namespace Flow.Launcher.Plugin.Caffeine
     /// </summary>
     public class Caffeine : IPlugin, ISettingProvider
     {
-        internal PluginInitContext Context;
-        private bool _enabled = false;
+        private PluginInitContext _context;
         private Settings.Settings _settings;
+        private bool _enabled = false;
+        
+        /// <summary>
+        /// Initialize the plugin
+        /// </summary>
+        /// <param name="context">Plugin initialization context</param>
+        public void Init(PluginInitContext context)
+        {
+            _context = context;
+            _settings = context.API.LoadSettingJsonStorage<Settings.Settings>();
+
+            // Start caffeine automatically if the setting is enabled
+            if (_settings.StartWithFlowLauncher)
+            {
+                StartCaffeine();
+            }
+        }
 
         /// <summary>
         /// Query method for Flow Launcher
@@ -47,7 +60,7 @@ namespace Flow.Launcher.Plugin.Caffeine
         /// Get the current state of caffeine for display
         /// </summary>
         /// <returns>String indicating next action (On/Off)</returns>
-        public string CaffeineState()
+        private string CaffeineState()
         {
             if (!_enabled)
             {
@@ -59,50 +72,28 @@ namespace Flow.Launcher.Plugin.Caffeine
             }
         }
 
-        private void KeepAlive()
-        {
-            NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_SYSTEM_REQUIRED | NativeMethods.ES_AWAYMODE_REQUIRED);
-        }
-        
         /// <summary>
-        /// Initialize the plugin
+        /// Start the caffeine service
         /// </summary>
-        /// <param name="context">Plugin initialization context</param>
-        public void Init(PluginInitContext context)
-        {
-            Context = context;
-            TrayIconManager.Initialize();
-            _settings = context.API.LoadSettingJsonStorage<Settings.Settings>();
-            
-            // Start caffeine automatically if the setting is enabled
-            if (_settings.StartWithFlowLauncher)
-            {
-                StartCaffeine();
-            }
-        }
-
         private void StartCaffeine()
         {
             if (!_enabled)
             {
                 PowerUtilities.PreventPowerSave();
-                if (TrayIconManager.IsInitialized)
-                {
-                    TrayIconManager.ShowTray();
-                }
+                TrayIconManager.ShowTray();
                 _enabled = true;
             }
         }
 
+        /// <summary>
+        /// Stop the caffeine service
+        /// </summary>
         private void StopCaffeine()
         {
             if (_enabled)
             {
                 PowerUtilities.Shutdown();
-                if (TrayIconManager.IsInitialized)
-                {
-                    TrayIconManager.HideTray();
-                }
+                TrayIconManager.HideTray();
                 _enabled = false;
             }
         }
@@ -113,7 +104,7 @@ namespace Flow.Launcher.Plugin.Caffeine
         /// <returns>The settings user control</returns>
         public System.Windows.Controls.Control CreateSettingPanel()
         {
-            return new PluginSettings(Context, _settings);
+            return new PluginSettings(_context, _settings);
         }
     }
 }

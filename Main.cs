@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Flow.Launcher.Plugin.Caffeine.Settings;
 
@@ -6,7 +7,7 @@ namespace Flow.Launcher.Plugin.Caffeine
     /// <summary>
     /// Main plugin class for the Caffeine Flow Launcher plugin
     /// </summary>
-    public class Caffeine : IPlugin, ISettingProvider
+    public class Caffeine : IPlugin, ISettingProvider, IDisposable
     {
         private PluginInitContext _context;
         private Settings.Settings _settings;
@@ -105,6 +106,14 @@ namespace Flow.Launcher.Plugin.Caffeine
         public System.Windows.Controls.Control CreateSettingPanel()
         {
             return new PluginSettings(_context, _settings);
+        }
+
+        /// <summary>
+        /// Dispose of resources when the plugin is unloaded
+        /// </summary>
+        public void Dispose()
+        {
+            StopCaffeine();
         }
     }
 }

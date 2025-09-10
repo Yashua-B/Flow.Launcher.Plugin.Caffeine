@@ -6,13 +6,46 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400">
     <Grid Margin="{StaticResource SettingPanelMargin}" VerticalAlignment="Top">
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top">
             <CheckBox x:Name="StartWithFlowLauncherCheckBox"
-                      Content="Start caffeine service when Flow Launcher starts"
                       VerticalAlignment="Center"
                       Margin="0,10,0,10"
                       Checked="StartWithFlowLauncherCheckBox_Changed"
-                      Unchecked="StartWithFlowLauncherCheckBox_Changed"/>
+                      Unchecked="StartWithFlowLauncherCheckBox_Changed">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" 
+                               Text="&#xE7E8;" 
+                               FontSize="16" 
+                               Margin="0,0,8,0" 
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    <TextBlock Text="Start caffeine service when Flow Launcher starts" 
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </CheckBox>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Top">
+            <CheckBox x:Name="SendNotificationsCheckBox"
+                      VerticalAlignment="Center"
+                      Margin="0,10,0,10"
+                      Checked="SendNotificationsCheckBox_Changed"
+                      Unchecked="SendNotificationsCheckBox_Changed">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" 
+                               Text="&#xE7E7;" 
+                               FontSize="16" 
+                               Margin="0,0,8,0" 
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    <TextBlock Text="Send notifications when caffeine starts/stops" 
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </CheckBox>
         </StackPanel>
     </Grid>
 </UserControl>

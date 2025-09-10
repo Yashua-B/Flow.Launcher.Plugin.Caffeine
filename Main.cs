@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Flow.Launcher.Plugin.Caffeine.Settings;
 using Flow.Launcher.Plugin.Caffeine.Tray;
 using Flow.Launcher.Plugin.Caffeine.Utilities;
@@ -14,6 +15,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     private PluginInitContext _context;
     private Settings.Settings _settings;
     private bool _enabled = false;
+    private string _iconPath;
     
     /// <summary>
     /// Initialize the plugin
@@ -23,6 +25,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     {
         _context = context;
         _settings = context.API.LoadSettingJsonStorage<Settings.Settings>();
+        _iconPath = Path.Combine(context.CurrentPluginMetadata.PluginDirectory, "Images/icon.png");
 
         // Start caffeine automatically if the setting is enabled
         if (_settings.StartWithFlowLauncher)
@@ -54,7 +57,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
                 }
                 return true;
             },
-            IcoPath = "Images/icon.png"
+            IcoPath = _iconPath
         };
         return new List<Result> { result };
     }
@@ -85,6 +88,10 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
             PowerUtilities.PreventPowerSave();
             TrayIconManager.ShowTray(_context);
             _enabled = true;
+            if (_settings.SendNotifications)
+            {
+                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now active 🟢", _iconPath);
+            }
         }
     }
 
@@ -98,6 +105,10 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
             PowerUtilities.Shutdown();
             TrayIconManager.HideTray();
             _enabled = false;
+            if (_settings.SendNotifications)
+            {
+                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now inactive 🔴", _iconPath);
+            }
         }
     }
 

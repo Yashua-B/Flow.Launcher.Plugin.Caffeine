@@ -1,4 +1,4 @@
-Caffiene for Flow Launcher
+Caffeine for Flow Launcher
 ==================
 A plugin for [Flow launcher](https://github.com/Flow-Launcher/Flow.Launcher) that prevents your pc from sleeping or turning off the monitor.  
 This is a replacement for [Caffeine](https://www.zhornsoftware.co.uk/caffeine/) that simply keeps your pc awake and screen on when active.  

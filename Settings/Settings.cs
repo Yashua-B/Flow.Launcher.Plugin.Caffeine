@@ -16,4 +16,9 @@ public class Settings
     /// Whether to send notifications when caffeine starts/stops
     /// </summary>
     public bool SendNotifications { get; set; } = true;
+
+    /// <summary>
+    /// Whether to show tray icon when caffeine is active
+    /// </summary>
+    public bool ShowTrayIcon { get; set; } = true;
 }

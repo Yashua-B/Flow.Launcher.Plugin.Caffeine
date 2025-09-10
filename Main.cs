@@ -12,9 +12,10 @@ namespace Flow.Launcher.Plugin.Caffeine;
 /// </summary>
 public class Caffeine : IPlugin, ISettingProvider, IDisposable
 {
+    internal static bool IsActive { get; private set; } = false;
+
     private PluginInitContext _context;
     private Settings.Settings _settings;
-    private bool _enabled = false;
     private string _iconPath;
     
     /// <summary>
@@ -47,7 +48,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
             SubTitle = "Toggle Caffeine off and on.",
             Action = c =>
             {
-                if (!_enabled)
+                if (!IsActive)
                 {
                     StartCaffeine();
                 }
@@ -68,14 +69,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     /// <returns>String indicating next action (On/Off)</returns>
     private string CaffeineState()
     {
-        if (!_enabled)
-        {
-            return "On";
-        }
-        else
-        {
-            return "Off";
-        }
+        return !IsActive ? "On" : "Off";
     }
 
     /// <summary>
@@ -83,15 +77,12 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     /// </summary>
     private void StartCaffeine()
     {
-        if (!_enabled)
+        if (!IsActive)
         {
             PowerUtilities.PreventPowerSave();
-            TrayIconManager.ShowTray(_context);
-            _enabled = true;
-            if (_settings.SendNotifications)
-            {
-                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now active 🟢", _iconPath);
-            }
+            IsActive = true;
+            if (_settings.ShowTrayIcon) TrayIconManager.ShowTray(_context);
+            if (_settings.SendNotifications) _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now active 🟢", _iconPath);
         }
     }
 
@@ -100,15 +91,12 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     /// </summary>
     private void StopCaffeine()
     {
-        if (_enabled)
+        if (IsActive)
         {
             PowerUtilities.Shutdown();
-            TrayIconManager.HideTray();
-            _enabled = false;
-            if (_settings.SendNotifications)
-            {
-                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now inactive 🔴", _iconPath);
-            }
+            IsActive = false;
+            if (_settings.ShowTrayIcon) TrayIconManager.HideTray();
+            if (_settings.SendNotifications) _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now inactive 🔴", _iconPath);
         }
     }
 

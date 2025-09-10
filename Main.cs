@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Flow.Launcher.Plugin.Caffeine.Settings;
+using Flow.Launcher.Plugin.Caffeine.Tray;
 
 namespace Flow.Launcher.Plugin.Caffeine
 {
@@ -81,7 +82,7 @@ namespace Flow.Launcher.Plugin.Caffeine
             if (!_enabled)
             {
                 PowerUtilities.PreventPowerSave();
-                TrayIconManager.ShowTray();
+                TrayIconManager.ShowTray(_context);
                 _enabled = true;
             }
         }

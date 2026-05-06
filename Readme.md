@@ -12,6 +12,22 @@ Type the following into [flow launcher](https://github.com/Flow-Launcher/Flow.La
 
 ![caffeine](Images/readme/caff-display.png)
 
+### Timed Mode
+
+Keep your PC awake for a specific duration instead of indefinitely:
+
+| Command | Effect |
+|---------|--------|
+| `caf` | Show duration presets (30m, 1h, 2h, 5h, 8h, indefinite) |
+| `caf 3` | Keep awake for 3 hours |
+| `caf 45m` | Keep awake for 45 minutes |
+| `caf 1.5` | Keep awake for 1.5 hours (90 minutes) |
+| `caf off` | Turn off caffeine |
+
+When caffeine is active with a timer, the remaining time is shown in the query results and tray icon tooltip.
+
+Right-click the tray icon for quick access to duration presets and turn off.
+
 ### Settings
 
 ![caffeine settings](Images/readme/caff-settings.png)

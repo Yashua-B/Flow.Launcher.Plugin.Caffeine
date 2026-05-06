@@ -38,12 +38,11 @@ internal static class TrayIconFactory
         // Duration presets — Task.Run prevents deadlock when callback hides the tray from the STA thread
         var presets = new (string label, TimeSpan? duration)[]
         {
+            ("Indefinite", null),
             ("30 minutes", TimeSpan.FromMinutes(30)),
             ("1 hour", TimeSpan.FromHours(1)),
             ("2 hours", TimeSpan.FromHours(2)),
-            ("5 hours", TimeSpan.FromHours(5)),
             ("8 hours", TimeSpan.FromHours(8)),
-            ("Indefinite", null),
         };
 
         foreach (var (label, duration) in presets)

@@ -18,15 +18,15 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     private Settings.Settings _settings;
     private string _iconPath;
     private CaffeineTimer _timer;
+    private TimeSpan? _activeDuration;
 
     private static readonly (string label, TimeSpan? duration)[] Presets =
     {
+        ("indefinitely", null),
         ("30 minutes", TimeSpan.FromMinutes(30)),
         ("1 hour", TimeSpan.FromHours(1)),
         ("2 hours", TimeSpan.FromHours(2)),
-        ("5 hours", TimeSpan.FromHours(5)),
         ("8 hours", TimeSpan.FromHours(8)),
-        ("indefinitely", null),
     };
 
     /// <summary>
@@ -64,27 +64,51 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
 
     private List<Result> BuildPresetResults(List<Result> results)
     {
+        var score = 500_000;
+
         if (IsActive)
         {
             results.Add(new Result
             {
-                Title = $"Caffeine is active — {GetStatusText()}",
-                SubTitle = "Select to turn off",
+                Title = "Turn off Caffeine",
+                SubTitle = $"Currently active — {GetStatusText()}",
                 Action = c => { StopCaffeine(); return true; },
-                IcoPath = _iconPath
+                IcoPath = _iconPath,
+                Score = score
             });
-        }
 
-        foreach (var (label, duration) in Presets)
-        {
-            var d = duration;
-            results.Add(new Result
+            foreach (var (label, duration) in Presets)
             {
-                Title = $"Keep awake for {label}",
-                SubTitle = IsActive ? "Will restart with new duration" : "",
-                Action = c => { StartCaffeine(d); return true; },
-                IcoPath = _iconPath
-            });
+                if (duration == _activeDuration)
+                    continue;
+
+                score -= 100_000;
+                var d = duration;
+                results.Add(new Result
+                {
+                    Title = $"Switch to {label}",
+                    SubTitle = "",
+                    Action = c => { StartCaffeine(d); return true; },
+                    IcoPath = _iconPath,
+                    Score = score
+                });
+            }
+        }
+        else
+        {
+            foreach (var (label, duration) in Presets)
+            {
+                var d = duration;
+                results.Add(new Result
+                {
+                    Title = $"Keep awake for {label}",
+                    SubTitle = "",
+                    Action = c => { StartCaffeine(d); return true; },
+                    IcoPath = _iconPath,
+                    Score = score
+                });
+                score -= 100_000;
+            }
         }
 
         return results;
@@ -204,6 +228,8 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
     /// </summary>
     private void StartCaffeine(TimeSpan? duration = null)
     {
+        _activeDuration = duration;
+
         if (!IsActive)
         {
             PowerUtilities.PreventPowerSave();
@@ -219,7 +245,10 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
             if (_settings.ShowTrayIcon)
                 TrayIconManager.ShowTray(_context, OnDurationSelected, () => StopCaffeine(), GetStatusText);
             if (_settings.SendNotifications)
-                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", "Caffeine is now active 🟢", _iconPath);
+            {
+                var durationText = duration.HasValue ? $" for {FormatDurationLabel(duration.Value)}" : "";
+                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", $"Caffeine is now active{durationText} 🟢", _iconPath);
+            }
         }
         else
         {
@@ -238,6 +267,11 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
                 _timer = null;
             }
             TrayIconManager.UpdateStatus();
+            if (_settings.SendNotifications)
+            {
+                var switchText = duration.HasValue ? FormatDurationLabel(duration.Value) : "indefinite";
+                _context.API.ShowMsg("Caffeine - Flow Launcher ☕", $"Switched to {switchText} 🔄", _iconPath);
+            }
         }
     }
 
@@ -250,6 +284,7 @@ public class Caffeine : IPlugin, ISettingProvider, IDisposable
         {
             PowerUtilities.Shutdown();
             IsActive = false;
+            _activeDuration = null;
 
             if (_timer != null)
             {

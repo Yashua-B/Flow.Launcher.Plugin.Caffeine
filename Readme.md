@@ -7,6 +7,9 @@ This is a replacement for [Caffeine](https://www.zhornsoftware.co.uk/caffeine/) 
 
 > Click the button above to grab the latest ready-to-use `.zip` — no compiling needed. See [Installation](#installation) below.
 
+> **About this version**  
+> This is a maintained fork of the [original Caffeine plugin](https://github.com/o850cHQk/Flow.Launcher.Plugin.Caffeine) by o850cHQk. I added **timed activation** (keep your PC awake for a set duration) and opened a [pull request](https://github.com/o850cHQk/Flow.Launcher.Plugin.Caffeine/pull/6) to contribute it back, but never heard from the original author. Until that changes, **this fork is the up-to-date version** with the newer features — the official plugin store still has the older original.
+
 Icons from [icons8](https://icons8.com/).  
 Thanks for that one guy on stackexchange that had a nice clean example of how power management works.
 
@@ -51,7 +54,9 @@ Make sure [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) is ins
 2. Unzip it into your Flow Launcher plugins folder: `%APPDATA%\FlowLauncher\Plugins`
 3. Restart Flow Launcher.
 
-### Option 2 — Plugin store
+### Option 2 — Plugin store (original version only)
+
+> ⚠️ **Heads up:** The plugin store currently lists the **original** version by o850cHQk, which does **not** include the timed-activation features added in this fork. Installing from the store will get you the original — to use this version, use **Option 1 (Download)** above.
 
 Execute the following command in the [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) query:
 

@@ -3,6 +3,10 @@ Caffeine for Flow Launcher
 A plugin for [Flow launcher](https://github.com/Flow-Launcher/Flow.Launcher) that prevents your pc from sleeping or turning off the monitor.  
 This is a replacement for [Caffeine](https://www.zhornsoftware.co.uk/caffeine/) that simply keeps your pc awake and screen on when active.  
 
+[![Download](https://img.shields.io/badge/⬇%20Download%20latest-Caffeine-2ea44f?style=for-the-badge&logo=github)](https://github.com/Yashua-B/Flow.Launcher.Plugin.Caffeine/releases/latest)
+
+> Click the button above to grab the latest ready-to-use `.zip` — no compiling needed. See [Installation](#installation) below.
+
 Icons from [icons8](https://icons8.com/).  
 Thanks for that one guy on stackexchange that had a nice clean example of how power management works.
 
@@ -39,8 +43,17 @@ Right-click the tray icon for quick access to duration presets and turn off. The
 
 ## Installation
 
-1. Install [flow launcher](https://github.com/Flow-Launcher/Flow.Launcher) if you haven't already.
-2. Execute the following command in [flow launcher](https://github.com/Flow-Launcher/Flow.Launcher) query to install the plugin.
+Make sure [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) is installed first.
+
+### Option 1 — Download (recommended)
+
+1. Download the latest [`Caffeine-x.x.x.zip`](https://github.com/Yashua-B/Flow.Launcher.Plugin.Caffeine/releases/latest).
+2. Unzip it into your Flow Launcher plugins folder: `%APPDATA%\FlowLauncher\Plugins`
+3. Restart Flow Launcher.
+
+### Option 2 — Plugin store
+
+Execute the following command in the [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) query:
 
 ```cmd
 pm install Caffeine by o850cHQk
